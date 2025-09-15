@@ -21,7 +21,11 @@ The purpose of this project is to create a fast non-visual simulation of the 4-s
 5. If the moved array is n-1 in relation to destination card and is not of the same suit, it is pushed on to the top of that stack.
 6. If stack complete is satisfied, the array is popped off of the card stack. A point is awarded.
 7. If deal is called, and there are cards left to be dealt, each time a card is dealt the program checks if the tail in that array is both n+1 relative to the card being added and of the same suit. If yes, the item becomes the new array, if no the item becomes the head of a new array pushed on top of the stack.
-##Java Class Diagram
-Card.java - Contains an int to distinguish card value and an enumeration to distinguish card suit.
+8. If deal is called on a card that is in the middle of an array, the arrays are split, leaving the remaining elements on the top of the stack, and moving the others. 
+## Java Classes
+Card.java - Contains an int to distinguish card value and an enumeration to distinguish card suit and a boolean to determine if FaceUp or FaceDown. Possibly could have times seen and numOnBoard for heuristical decisiomaking.
 DoubleDeck.java - An indexed data structure that is 2 decks of cards in a random order. Its constructor will shuffle the cards. It will need to contain only 2 copies of each card.
-FourSuitSS.java - The game structure for our solitaire game, given actions
+FourSuitSS.java - The game structure for our solitaire game, It will consist of 10 stacks, will deal cards from a DoubleDeck into these stacks and keep the remainder deck for later dealing. It will need to be able to have a move call that takes an input destination, and the head of the array of cards it is moving. If it is moving from the middle of the array it will have to split that array. It will also have to check if the move is legal, and whether to pop it on the top of the stack or add it to the tail array. It will need a Score funtion to eliminate completed arrays. It will need a checkIfGameOver function useful for the playing algorithm. A draw gameboard function for terminal play. 
+FourSuitsSSDriver.java - A game driver allowing for a player to interface with game. 
+FourSuitsSSAlgorithm.java - A driver for rapid playing of game by an algorithm, There will likely be multiple of these, with the user being able to input an algorithm strategy, and recieve statistical information about said strategy. 
+FourSuitsSSTest.java - Unit tests for the FourSuitSS game structure.
