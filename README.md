@@ -78,61 +78,6 @@ This program will be written in **Java** and will use **JUnit** as a testing fra
 
 ---
 
-## Simulation & Algorithm Design  
-
-### Strategy Interface  
-- Define a `Strategy` interface or abstract class to represent a move-deciding algorithm.  
-- Algorithms will implement `Strategy` and can be plugged into `FourSuitsSSAlgorithm`.  
-
-### Heuristic Examples  
-- **Greedy Move**: always make the move that frees the most cards.  
-- **Suit-Stack Prioritization**: prefer moves that build same-suit sequences.  
-- **Empty-Stack-Prioritization**:  prefer moves that lead to open stacks
-
-### Metrics Collected  
-- Win rate (percentage of games completed).  
-- Average score per game.  
-- Average moves per game.  
-- Average time per game.  
-
----
-
-## Testing Plan  
-
-### Unit Tests (FourSuitsSSTest.java)  
-- `testValidMove()`  
-- `testInvalidMove()`  
-- `testDealCards()`  
-- `testStackCompletion()`  
-- `testGameOverCondition()`  
-- `testAlgorithmPerformance()` (simulate multiple games).  
-
-### Integration Tests  
-- Simulate a full game from a known seed and verify the outcome.  
-- Simulate algorithm runs to ensure stable performance metrics.  
-
-### Coverage Goals  
-- Aim for at least 80% line coverage across `FourSuitSS` and related classes.  
-
----
-
-## Performance & Scaling  
-
-- **Bulk Simulation**:  
-  - Provide a method to run thousands of games automatically with different seeds.  
-  - Collect aggregated statistics for each algorithm.  
-
-- **Parallelization**:  
-  - Allow multiple games to run concurrently using Java threads or `ForkJoinPool` for faster benchmarking.  
-
-- **State Management**:  
-  - Add a way to clone or serialize game states for fast rollbacks during heuristic evaluation.  
-
-- **Logging**:  
-  - Implement a `GameStats` or logging class to track each game’s progress and output in a structured format (CSV/JSON).  
-
----
-
 ## Class Diagram  
 
 ```mermaid
@@ -177,13 +122,9 @@ classDiagram
         +testGameOver()
     }
 
-    interface Strategy {
-        +chooseMove(gameState)
-    }
-
     FourSuitSS --> DoubleDeck : uses
     FourSuitSS --> Card : contains
     FourSuitsSSDriver --> FourSuitSS : controls
     FourSuitsSSAlgorithm --> FourSuitSS : automates
     FourSuitsSSTest --> FourSuitSS : tests
-    FourSuitsSSAlgorithm --> Strategy : uses
+
