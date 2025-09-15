@@ -1,31 +1,129 @@
-# 4-Suit-Spider-Solitaire
-The purpose of this project is to create a fast non-visual simulation of the 4-suit-spider-solitaire game, and pair it with multiple different heuristical algorithms to try and find an algorithm with a high relative success rate. This program will be written in java, and will use JUnit as a testing framework.
-#The Game Rules
-## Setting Up
-1. Two decks of cards are shuffled together such that there are two copies of every card in the deck.
-2. The cards are placed sequencially such that there are 10 stacks, the first 4 stacks containing 5 cards, and the remainder containing four
-3. One last deal is made on the top of each of these stacks face up, and  the remainder of the cards are kept to be dealt later
-## Game-Actions
-1. Move Action: You can move a card of value n from the stack that it is on to another stack, provided that the destination stack has a card of n+1 value or if the destination stack is empty. You can move a stack of multiple cards provided that each item in the stack you are trying to move, up to the last item, is of the same suit and the destination has a value n+1 relative to the last item or if the destination stack is empty.
-2. Deal: You can deal from the remainder deck at any time, provided there are no empty stacks. You deal 1 card sequencially onto each stack. You can deal until there are no cards left in the deal pile.
-3. New Game: Generates a new game from a random seed.
-## Game-Conditions
-1. Stack-Complete: If the game detects a complete stack after a move action(King-A sequencially all of the same suit), the stack will be eliminated, leaving the last item in the Column stack as the new top card. This will score the algorithm a point, with an 8 point game being a full completion.
-2. Game-Complete: If there are no more Stacks left then the game will end with success.
-3. Game-Over: If there are no more deals left, and no more useful moves that can be taken. Ex(there are two stacks with an open 8, and one stack with an open 7, we do not want the algorithm to get stuck infinitely moving the 7 between both 8's
-## Game-Structure and implementation logic
-1. A card stack is a stack of multiple arrays, each array will be in sorted order and of the same suit.
-2. If a card is to be moved onto another stack, and that card is of the same suit, then this element will be added to the existing array.
-3. If a card is to be moved onto another stack, is numerically n-1 related to the destination and is not of the same suit, a new array is created and pushed onto the top of that stack containing that element.
-4. If an array is moved, it follows the above rules for the first element in that array. So if suit of head of the list is same suit and n-1 in relation to the destination then the destination array and the current array are combined
-5. If the moved array is n-1 in relation to destination card and is not of the same suit, it is pushed on to the top of that stack.
-6. If stack complete is satisfied, the array is popped off of the card stack. A point is awarded.
-7. If deal is called, and there are cards left to be dealt, each time a card is dealt the program checks if the tail in that array is both n+1 relative to the card being added and of the same suit. If yes, the item becomes the new array, if no the item becomes the head of a new array pushed on top of the stack.
-8. If deal is called on a card that is in the middle of an array, the arrays are split, leaving the remaining elements on the top of the stack, and moving the others. 
-## Java Classes
-Card.java - Contains an int to distinguish card value and an enumeration to distinguish card suit and a boolean to determine if FaceUp or FaceDown. Possibly could have times seen and numOnBoard for heuristical decisiomaking.
-DoubleDeck.java - An indexed data structure that is 2 decks of cards in a random order. Its constructor will shuffle the cards. It will need to contain only 2 copies of each card.
-FourSuitSS.java - The game structure for our solitaire game, It will consist of 10 stacks, will deal cards from a DoubleDeck into these stacks and keep the remainder deck for later dealing. It will need to be able to have a move call that takes an input destination, and the head of the array of cards it is moving. If it is moving from the middle of the array it will have to split that array. It will also have to check if the move is legal, and whether to pop it on the top of the stack or add it to the tail array. It will need a Score funtion to eliminate completed arrays. It will need a checkIfGameOver function useful for the playing algorithm. A draw gameboard function for terminal play. 
-FourSuitsSSDriver.java - A game driver allowing for a player to interface with game. 
-FourSuitsSSAlgorithm.java - A driver for rapid playing of game by an algorithm, There will likely be multiple of these, with the user being able to input an algorithm strategy, and recieve statistical information about said strategy. 
-FourSuitsSSTest.java - Unit tests for the FourSuitSS game structure.
+# 4-Suit Spider Solitaire  
+
+The purpose of this project is to create a fast, non-visual simulation of the 4-Suit Spider Solitaire game and pair it with multiple heuristic algorithms to find one with a high relative success rate.  
+This program will be written in **Java** and will use **JUnit** as a testing framework.
+
+---
+
+## Game Rules  
+
+### Setting Up  
+1. Two decks of cards are shuffled together so that there are two copies of every card.  
+2. The cards are placed sequentially into 10 stacks: the first 4 stacks contain 5 cards each, and the remaining 6 stacks contain 4 cards each.  
+3. One final deal is made on top of each stack (face up). The remaining cards form the stock for later dealing.  
+
+### Game Actions  
+1. **Move Action**:  
+   - You can move a card of value *n* from its stack to another stack if the destination stack has a card of value *n+1* or if the destination stack is empty.  
+   - You can move a sequence of cards provided that every card in that sequence is of the same suit and forms a descending sequence. The destination must have a card of value *n+1* relative to the last card in the moved sequence, or the destination stack must be empty.  
+
+2. **Deal**:  
+   - You can deal from the stock at any time, provided there are no empty stacks.  
+   - One card is dealt sequentially onto each stack until the stock is empty.  
+
+3. **New Game**:  
+   - Generates a new game from a random seed.  
+
+### Game Conditions  
+1. **Stack Complete**:  
+   - If a complete sequence from King to Ace (all of the same suit) is detected after a move, that sequence is removed from the game.  
+   - This scores one point. A full completion is 8 points.  
+
+2. **Game Complete**:  
+   - The game ends successfully when no stacks remain.  
+
+3. **Game Over**:  
+   - If there are no more cards to deal and no useful moves remain.  
+   - Example: there are two stacks with an open 8 and one stack with an open 7 — we don’t want the algorithm to get stuck infinitely moving the 7 between both 8s.  
+
+---
+
+## Game Structure & Implementation Logic  
+
+1. A card stack consists of multiple arrays; each array is sorted and of the same suit.  
+2. If a card is moved onto another stack and matches the suit, it is added to the existing array.  
+3. If a card is moved onto another stack, is numerically *n-1* relative to the destination, and is not of the same suit, a new array is created and pushed on top of the stack.  
+4. If an array is moved, it follows the same rules based on its head card.  
+5. If the moved array is *n-1* relative to the destination card and is not of the same suit, it is pushed onto the top of the stack as a new array.  
+6. When a stack-complete condition is satisfied, the array is removed and a point awarded.  
+7. When dealing, if the tail of an array matches *n+1* and the same suit relative to the new card, the card joins the existing array; otherwise, it starts a new array on top of the stack.  
+8. If a deal places a card into the middle of an array, the array is split: remaining elements stay, and the new cards form a new array.  
+
+---
+
+## Java Classes  
+
+- **Card.java**  
+  - Contains an `int` for card value, an `enum` for suit, and a `boolean` for face-up or face-down state.  
+  - May also track times seen and number on board for heuristic decision-making.  
+
+- **DoubleDeck.java**  
+  - Represents two decks of cards in a random order.  
+  - Constructor shuffles cards and ensures exactly two copies of each card.  
+
+- **FourSuitSS.java**  
+  - Core game structure.  
+  - Manages 10 stacks and deals cards from a `DoubleDeck`.  
+  - Handles moves, splitting arrays, checking legality, scoring completed sequences, checking for game over, and drawing the board in terminal mode.  
+
+- **FourSuitsSSDriver.java**  
+  - Player interface for manual gameplay.  
+
+- **FourSuitsSSAlgorithm.java**  
+  - Driver for automated/algorithmic play.  
+  - Allows multiple strategies and outputs statistics on performance.  
+
+- **FourSuitsSSTest.java**  
+  - Unit tests for the `FourSuitSS` game structure using JUnit.  
+
+---
+
+## Class Diagram  
+
+```mermaid
+classDiagram
+    class Card {
+        -int value
+        -Suit suit
+        -boolean faceUp
+        -int timesSeen
+        -int numOnBoard
+    }
+
+    class DoubleDeck {
+        -List<Card> cards
+        +shuffle()
+        +dealCard() Card
+    }
+
+    class FourSuitSS {
+        -Stack<Card[]> stacks[10]
+        -DoubleDeck deck
+        +moveCard(fromStack, toStack)
+        +deal()
+        +checkIfGameOver()
+        +score()
+        +drawGameboard()
+    }
+
+    class FourSuitsSSDriver {
+        +main()
+        +getPlayerInput()
+    }
+
+    class FourSuitsSSAlgorithm {
+        +runAlgorithm(strategy)
+        +generateStats()
+    }
+
+    class FourSuitsSSTest {
+        +testMove()
+        +testDeal()
+        +testGameOver()
+    }
+
+    FourSuitSS --> DoubleDeck : uses
+    FourSuitSS --> Card : contains
+    FourSuitsSSDriver --> FourSuitSS : controls
+    FourSuitsSSAlgorithm --> FourSuitSS : automates
+    FourSuitsSSTest --> FourSuitSS : tests
